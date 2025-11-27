@@ -1,0 +1,58 @@
+# Define a versão da sintaxe do Docker Compose. A 3.8 é estável e moderna.
+version: '3.8'
+
+# Inicia a lista de serviços containers que compõem nossa arquitetura.
+services:
+
+  app:
+    # Nome do container
+    container_name: dev_backend
+
+    # Redireciona o docker-compose a olhar o Dockerfile para construir a imagem
+    build: .
+
+    # Redireciona a porta 8080 da máquina local para a 8080 do Spring Boot.
+    ports:
+      - "8080:8080"
+
+    # Espelha a pasta local do projeto para dentro do container, permitindo a edição do código via IDE
+    volumes:
+      - .:/app
+
+    # Variáveis de Ambiente injetadas no Linux do container.
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/projetodb
+      - SPRING_DATASOURCE_USERNAME=db-admin
+      - SPRING_DATASOURCE_PASSWORD=db-password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+    # Garante a ordem de inicialização: O App só tenta subir se o DB já tiver iniciado.
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: dev_database
+
+    # Mapeamento de Portas.
+    # ⚠️ ALERTA DE SEGURANÇA (PRODUÇÃO) ⚠️
+    # Em ambiente de DESENVOLVIMENTO, mantemos "5432:5432" para acessar o banco com ferramentas visuais.
+    # QUANDO FOR PARA PRODUÇÃO: Remova ou comente estas linhas de 'ports'.
+    # O banco nunca deve estar exposto publicamente na internet, apenas para a rede interna do Docker.
+    ports:
+      - "5432:5432"
+
+    environment:
+      - POSTGRES_DB=projetodb
+      - POSTGRES_USER=db-admin
+      - POSTGRES_PASSWORD=db-password
+
+    # Usa um volume gerenciado pelo Docker para que os dados não sumam se o container reiniciar.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Declaração dos volumes gerenciados (Cria o "HD virtual" para o banco).
+volumes:
+  postgres_data:
+
+
