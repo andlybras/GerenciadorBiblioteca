@@ -28,7 +28,7 @@ Este projeto utiliza o padrão de infraestrutura do grupo `String[] devs = {"C",
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/SEU_USUARIO/GerenciadorBiblioteca.git](https://github.com/SEU_USUARIO/GerenciadorBiblioteca.git)
+    git clone [https://github.com/andlybras/GerenciadorBiblioteca.git](https://github.com/andlybras/GerenciadorBiblioteca.git)
     cd GerenciadorBiblioteca
     ```
 
